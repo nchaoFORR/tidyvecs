@@ -1,2 +1,2 @@
 # tidyvecs
-Word-Vectors with tidy data principles.
+Word-vectors with tidy data principles.
