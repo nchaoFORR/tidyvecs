@@ -17,17 +17,15 @@ class TidyVec:
         model = which (spacy) word embedding movel to use
     '''
 
-    def __init__(self, token_col, model="en_core_web_sm"):
-        self.text = token_col
+    def __init__(self, model="en_core_web_sm"):
         self.model = spacy.load(model)
-        self.tokens = [self.model(word) for word in self.text]
 
     """
     Vectorizes text column from R tibble..
     """
 
-    def vectorize(self):
-        return DataFrame({token.text: token.vector for token in self.tokens})
+    def vectorize(self, token):
+        return self.model(token).vector
 
     """
     Lemmatizes text column from R tibble

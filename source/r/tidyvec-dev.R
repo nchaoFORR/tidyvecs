@@ -17,8 +17,8 @@ df <-
   df %>% 
   unnest_tokens(token, text)
 
-vec_engine = TidyVec(token_col=df["token"])
-vec_engine$vectorize()
+vec_engine = TidyVec()
+vec_engine$vectorize("text")
 
 
 ### Lemmatize Function for tidy workflow
@@ -33,17 +33,21 @@ lemmatize <- function(df, token_col, lemma = NA) {
 
 
 ### Vectorize function for tidy workflow
-vectorize <- function(df, token_col) {
-  vec_engine = TidyVec(text_col=df[token_col])
-  vectors = vec_engine$vectorize()
-
-  # df <-
-  #   df %>% 
-  #   bind_cols(as.data.frame(vectors))
-  
-  return(vectors)
+bind_word_vectors <- function(df, token_col) {
+  engine = TidyVec()
+  df %>% 
+    bind_cols(
+      purrr::map_dfr(pull(df[token_col]), function(token) {
+        tibble(val = engine$vectorize(token)) %>% 
+          tibble::rowid_to_column('var') %>% 
+          mutate(var = paste0("dim_", var)) %>% 
+          tidyr::spread(var, val)
+      })
+    )
 }
 
 
+
 df %>% 
-  vectorize(text_col = "text")
+  sample_n(100) %>% 
+  bind_word_vectors("token")
