@@ -13,12 +13,16 @@ source_python(TIDYVEC_FP)
 
 df <- austen_books()
 
-vec_engine = TidyVec(text_col=df["text"])
-vec_engine$lemmatize()[[1]]
+df <- 
+  df %>% 
+  unnest_tokens(token, text)
+
+vec_engine = TidyVec(token_col=df["token"])
+vec_engine$vectorize()
 
 
 ### Lemmatize Function for tidy workflow
-lemmatize <- function(df, text_col, lemma = NA) {
+lemmatize <- function(df, token_col, lemma = NA) {
   vec_engine = TidyVec(text_col=df[text_col])
   if(is.na(lemma)) {
     lemmas = vec_engine$lemmatize()
@@ -29,8 +33,8 @@ lemmatize <- function(df, text_col, lemma = NA) {
 
 
 ### Vectorize function for tidy workflow
-vectorize <- function(df, text_col) {
-  vec_engine = TidyVec(text_col=df[text_col])
+vectorize <- function(df, token_col) {
+  vec_engine = TidyVec(text_col=df[token_col])
   vectors = vec_engine$vectorize()
 
   # df <-
