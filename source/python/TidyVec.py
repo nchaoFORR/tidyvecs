@@ -16,7 +16,7 @@ class TidyVec:
         model = which (spacy) word embedding movel to use
     '''
 
-    def __init__(self, text_col, model="en_core_web_md"):
+    def __init__(self, text_col, model="en_core_web_sm"):
         self.text = text_col
         self.model = spacy.load(model)
         self.docs = [self.model(doc) for doc in self.text]
@@ -25,12 +25,12 @@ class TidyVec:
     Vectorizes text column from R tibble..
     """
 
-    def vectorize(self, text):
+    def vectorize(self):
         return [doc.vector for doc in self.docs]
 
     """
     Lemmatizes text column from R tibble
     """
 
-    def lemmatize(self, text):
-        return [doc.lemma_ for doc in self.docs]
+    def lemmatize(self):
+        return [doc.lemma for doc in self.docs]
