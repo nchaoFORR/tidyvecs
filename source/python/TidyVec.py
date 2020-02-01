@@ -31,5 +31,5 @@ class TidyVec:
     Lemmatizes text column from R tibble
     """
 
-    def lemmatize(self):
-        return [doc.lemma for doc in self.docs]
+    def lemmatize(self, token):
+        return self.model(token)[0].lemma_

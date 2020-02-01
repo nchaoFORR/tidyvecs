@@ -19,16 +19,14 @@ df <-
 
 vec_engine = TidyVec()
 vec_engine$vectorize("text")
+vec_engine$lemmatize("text")
 
 
 ### Lemmatize Function for tidy workflow
 lemmatize <- function(df, token_col, lemma = NA) {
-  vec_engine = TidyVec(text_col=df[text_col])
-  if(is.na(lemma)) {
-    lemmas = vec_engine$lemmatize()
-  }
-  df[, "text_col"] <- lemmas
-  return(df)
+  engine = TidyVec()
+  df %>% 
+    mutate(lemma = purrr::map_chr(pull(df[token_col]), ~engine$lemmatize(.)))
 }
 
 
@@ -47,6 +45,9 @@ bind_word_vectors <- function(df, token_col) {
 }
 
 
+df %>% 
+  sample_n(100) %>% 
+  lemmatize("token")
 
 df %>% 
   sample_n(100) %>% 
