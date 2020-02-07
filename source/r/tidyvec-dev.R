@@ -17,11 +17,6 @@ df <-
   df %>% 
   unnest_tokens(token, text)
 
-vec_engine = TidyVec()
-vec_engine$vectorize("text")
-vec_engine$lemmatize("text")
-
-
 ### Lemmatize Function for tidy workflow
 lemmatize <- function(df, token_col, lemma = NA) {
   engine = TidyVec()
@@ -45,6 +40,22 @@ bind_word_vectors <- function(df, token_col) {
 }
 
 
+### Create clusters of tidy data
+cluster_data <- function(df, cols = NA,centers,  algo = 'k-means') {
+  # If cols is NA, grab all numeric calls, otherwise grab
+  # specified cols
+  if(is.na(cols)) df <- df[, purrr:::map_lgl(df, is.numeric)]
+  else df <- df[, map_lgl(names(df), ~ . %in% cols)]
+  if(algo == 'k-means') {
+    cluster_model <- kmeans(df, centers=centers)
+    df <-
+      df %>% 
+      mutate(cluster = cluster_model$cluster)
+  }
+  return(df)
+}
+
+
 df %>% 
   sample_n(100) %>% 
   lemmatize("token")
@@ -52,3 +63,8 @@ df %>%
 df %>% 
   sample_n(100) %>% 
   bind_word_vectors("token")
+
+df %>% 
+  sample_n(100) %>% 
+  bind_word_vectors("token") %>% 
+  cluster_data(centers=15)
